@@ -2,169 +2,183 @@ package com.bcnc.inditexpriceservice.application.service;
 import com.bcnc.inditexpriceservice.domain.model.Price;
 import com.bcnc.inditexpriceservice.infrastructure.persistance.PriceRepository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-
+@ExtendWith(MockitoExtension.class)
 public class PriceServiceTest {
 
+    @Mock
     private PriceRepository priceRepository;
+
+    @Mock
+    private PriceServiceImpl priceServiceImpl;
+
+    @InjectMocks
     private PriceService priceService;
 
-    @BeforeEach
-    void setUp() {
-        priceRepository = Mockito.mock(PriceRepository.class);
-        priceService = new PriceService(priceRepository);
-    }
-
     @Test
-    void returnCorrectPriceFor10AMOn14June2020() {
-        LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 14, 10, 0);
+    void getPriceAt10amOn14th() {
+
         Long brandId = 1L;
         Long productId = 35455L;
+        LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 14, 10, 0);
 
         Price expectedPrice = Price.builder()
                 .id(1L)
                 .brandId(brandId)
+                .productId(productId)
                 .startDate(LocalDateTime.of(2020, 6, 14, 0, 0))
                 .endDate(LocalDateTime.of(2020, 12, 31, 23, 59))
-                .priceList(1L)
-                .productId(productId)
                 .priority(0)
-                .price(new BigDecimal("35.50"))
+                .price(BigDecimal.valueOf(35.50))
                 .currency("EUR")
                 .build();
 
         when(priceRepository.findByBrandIdProductIdAndDate(brandId, productId, applicationDate))
                 .thenReturn(List.of(expectedPrice));
+        when(priceServiceImpl.getApplicablePrice(List.of(expectedPrice)))
+                .thenReturn(Optional.of(expectedPrice));
 
-        Optional<Price> actualPrice = priceService.getPrice(brandId, productId, applicationDate);
 
-        assertEquals(Optional.of(expectedPrice), actualPrice);
+        Optional<Price> result = priceService.getPrice(brandId, productId, applicationDate);
+
+
+        assertTrue(result.isPresent());
+        assertEquals(expectedPrice, result.get());
     }
 
     @Test
-    void returnCorrectPriceFor4PMOn14June2020() {
-        LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 14, 16, 0);
+    void getPriceAt4pmOn14th() {
+
         Long brandId = 1L;
         Long productId = 35455L;
+        LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 14, 16, 0);
 
-        Price higherPriorityPrice = Price.builder()
-                .id(2L)
+        Price price1 = Price.builder()
+                .id(1L)
                 .brandId(brandId)
-                .startDate(LocalDateTime.of(2020, 6, 14, 15, 0))
-                .endDate(LocalDateTime.of(2020, 6, 14, 18, 30))
-                .priceList(2L)
                 .productId(productId)
-                .priority(1)
-                .price(new BigDecimal("25.45"))
+                .startDate(LocalDateTime.of(2020, 6, 14, 0, 0))
+                .endDate(LocalDateTime.of(2020, 12, 31, 23, 59))
+                .priority(0)
+                .price(BigDecimal.valueOf(35.50))
                 .currency("EUR")
                 .build();
 
-        Price lowerPriorityPrice = Price.builder()
-                .id(1L)
+        Price price2 = Price.builder()
+                .id(2L)
                 .brandId(brandId)
-                .startDate(LocalDateTime.of(2020, 6, 14, 0, 0))
-                .endDate(LocalDateTime.of(2020, 12, 31, 23, 59))
-                .priceList(1L)
                 .productId(productId)
-                .priority(0)
-                .price(new BigDecimal("35.50"))
+                .startDate(LocalDateTime.of(2020, 6, 14, 15, 0))
+                .endDate(LocalDateTime.of(2020, 6, 14, 18, 30))
+                .priority(1)
+                .price(BigDecimal.valueOf(25.45))
                 .currency("EUR")
                 .build();
 
         when(priceRepository.findByBrandIdProductIdAndDate(brandId, productId, applicationDate))
-                .thenReturn(List.of(lowerPriorityPrice, higherPriorityPrice));
+                .thenReturn(List.of(price1, price2));
+        when(priceServiceImpl.getApplicablePrice(List.of(price1, price2)))
+                .thenReturn(Optional.of(price2));
 
-        Optional<Price> actualPrice = priceService.getPrice(brandId, productId, applicationDate);
 
-        assertEquals(Optional.of(higherPriorityPrice), actualPrice);
+        Optional<Price> result = priceService.getPrice(brandId, productId, applicationDate);
+
+
+        assertTrue(result.isPresent());
+        assertEquals(price2, result.get());
     }
 
     @Test
-    void returnCorrectPriceFor9PMOn14June2020() {
+    void getPriceAt9pmOn14th() {
+
+        Long brandId = 1L;
+        Long productId = 35455L;
         LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 14, 21, 0);
-        Long brandId = 1L;
-        Long productId = 35455L;
 
-        Price defaultPrice = Price.builder()
-                .id(1L)
-                .brandId(brandId)
-                .startDate(LocalDateTime.of(2020, 6, 14, 0, 0))
-                .endDate(LocalDateTime.of(2020, 12, 31, 23, 59))
-                .priceList(1L)
-                .productId(productId)
-                .priority(0)
-                .price(new BigDecimal("35.50"))
-                .currency("EUR")
-                .build();
+        when(priceRepository.findByBrandIdProductIdAndDate(brandId, productId, applicationDate))
+                .thenReturn(List.of());
+        when(priceServiceImpl.getApplicablePrice(List.of()))
+                .thenReturn(Optional.empty());
 
-        when(priceRepository.findByBrandIdAndProductIdAndDate(brandId, productId, applicationDate))
-                .thenReturn(List.of(defaultPrice));
 
-        Optional<Price> actualPrice = priceService.getPrice(brandId, productId, applicationDate);
+        Optional<Price> result = priceService.getPrice(brandId, productId, applicationDate);
 
-        assertEquals(Optional.of(defaultPrice), actualPrice);
+
+        assertFalse(result.isPresent());
     }
 
     @Test
-    void returnCorrectPriceFor10AMOn15June2020() {
-        LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 15, 10, 0);
+    void getPriceAt10amOn15th() {
+
         Long brandId = 1L;
         Long productId = 35455L;
+        LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 15, 10, 0);
 
-        Price specialPrice = Price.builder()
+        Price expectedPrice = Price.builder()
                 .id(3L)
                 .brandId(brandId)
+                .productId(productId)
                 .startDate(LocalDateTime.of(2020, 6, 15, 0, 0))
                 .endDate(LocalDateTime.of(2020, 6, 15, 11, 0))
-                .priceList(3L)
-                .productId(productId)
                 .priority(1)
-                .price(new BigDecimal("30.50"))
+                .price(BigDecimal.valueOf(30.50))
                 .currency("EUR")
                 .build();
 
-        when(priceRepository.findByBrandIdAndProductIdAndDate(brandId, productId, applicationDate))
-                .thenReturn(List.of(specialPrice));
+        when(priceRepository.findByBrandIdProductIdAndDate(brandId, productId, applicationDate))
+                .thenReturn(List.of(expectedPrice));
+        when(priceServiceImpl.getApplicablePrice(List.of(expectedPrice)))
+                .thenReturn(Optional.of(expectedPrice));
 
-        Optional<Price> actualPrice = priceService.getPrice(brandId, productId, applicationDate);
 
-        assertEquals(Optional.of(specialPrice), actualPrice);
+        Optional<Price> result = priceService.getPrice(brandId, productId, applicationDate);
+
+
+        assertTrue(result.isPresent());
+        assertEquals(expectedPrice, result.get());
     }
 
     @Test
-    void returnCorrectPriceFor9PMOn16June2020() {
-        LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 16, 21, 0);
+    void getPriceAt9pmOn16th() {
+
         Long brandId = 1L;
         Long productId = 35455L;
+        LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 16, 21, 0);
 
-        Price defaultPrice = Price.builder()
+        Price expectedPrice = Price.builder()
                 .id(4L)
                 .brandId(brandId)
+                .productId(productId)
                 .startDate(LocalDateTime.of(2020, 6, 15, 16, 0))
                 .endDate(LocalDateTime.of(2020, 12, 31, 23, 59))
-                .priceList(4L)
-                .productId(productId)
                 .priority(1)
-                .price(new BigDecimal("38.95"))
+                .price(BigDecimal.valueOf(38.95))
                 .currency("EUR")
                 .build();
 
-        when(priceRepository.findByBrandIdAndProductIdAndDate(brandId, productId, applicationDate))
-                .thenReturn(List.of(defaultPrice));
+        when(priceRepository.findByBrandIdProductIdAndDate(brandId, productId, applicationDate))
+                .thenReturn(List.of(expectedPrice));
+        when(priceServiceImpl.getApplicablePrice(List.of(expectedPrice)))
+                .thenReturn(Optional.of(expectedPrice));
 
-        Optional<Price> actualPrice = priceService.getPrice(brandId, productId, applicationDate);
 
-        assertEquals(Optional.of(defaultPrice), actualPrice);
+        Optional<Price> result = priceService.getPrice(brandId, productId, applicationDate);
+
+
+        assertTrue(result.isPresent());
+        assertEquals(expectedPrice, result.get());
     }
 
     @Test
@@ -173,7 +187,7 @@ public class PriceServiceTest {
         Long brandId = 1L;
         Long productId = 35455L;
 
-        when(priceRepository.findByBrandIdAndProductIdAndDate(brandId, productId, applicationDate))
+        when(priceRepository.findByBrandIdProductIdAndDate(brandId, productId, applicationDate))
                 .thenReturn(List.of());
 
         Optional<Price> actualPrice = priceService.getPrice(brandId, productId, applicationDate);
@@ -187,7 +201,7 @@ public class PriceServiceTest {
         Long brandId = 99L; // Nonexistent brand
         Long productId = 99999L; // Nonexistent product
 
-        when(priceRepository.findByBrandIdAndProductIdAndDate(brandId, productId, applicationDate))
+        when(priceRepository.findByBrandIdProductIdAndDate(brandId, productId, applicationDate))
                 .thenReturn(List.of());
 
         Optional<Price> actualPrice = priceService.getPrice(brandId, productId, applicationDate);
@@ -225,8 +239,10 @@ public class PriceServiceTest {
                 .currency("EUR")
                 .build();
 
-        when(priceRepository.findByBrandIdAndProductIdAndDate(brandId, productId, applicationDate))
+        when(priceRepository.findByBrandIdProductIdAndDate(brandId, productId, applicationDate))
                 .thenReturn(List.of(price1, price2));
+        when(priceServiceImpl.getApplicablePrice(List.of(price1, price2)))
+                .thenReturn(Optional.of(price1));
 
         Optional<Price> actualPrice = priceService.getPrice(brandId, productId, applicationDate);
 
