@@ -25,13 +25,10 @@ public class PriceService {
      * @param brandId         the brand ID
      * @param productId       the product ID
      * @param applicationDate the application date
-     * @return an Optional containing the applicable Price or empty if none found
      */
-    public Optional<Price> getPrice(Long brandId, Long productId, LocalDateTime applicationDate) {
-        // Retrieve prices from the repository (infrastructure layer)
-        List<Price> prices = priceRepository.findByBrandIdProductIdAndDate(brandId, productId, applicationDate);
+    public Price getPrice(Long brandId, Long productId, LocalDateTime applicationDate) {
 
-        // Delegate business logic to the domain service
-        return priceServiceImpl.getApplicablePrice(prices);
+        List<Price> prices = priceRepository.findByBrandIdProductIdAndDate(brandId, productId);
+        return priceServiceImpl.getApplicablePrice(prices, applicationDate);
     }
 }
