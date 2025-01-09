@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PriceService {
@@ -28,7 +27,7 @@ public class PriceService {
      */
     public Price getPrice(Long brandId, Long productId, LocalDateTime applicationDate) {
 
-        List<Price> prices = priceRepository.findByBrandIdProductIdAndDate(brandId, productId);
+        List<Price> prices = priceRepository.findByBrandIdAndProductId(brandId, productId);
         return priceServiceImpl.getApplicablePrice(prices, applicationDate);
     }
 }
