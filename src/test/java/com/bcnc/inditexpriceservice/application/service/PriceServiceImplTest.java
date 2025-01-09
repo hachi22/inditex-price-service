@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,9 +36,10 @@ public class PriceServiceImplTest {
 
         LocalDateTime applicationDate = LocalDateTime.of(2023, 12, 23, 15, 0, 0);
 
-        Price result = priceServiceImpl.getApplicablePrice(List.of(price1), applicationDate);
+        Optional<Price> result = priceServiceImpl.getApplicablePrice(List.of(price1), applicationDate);
 
-        assertEquals(new BigDecimal("50.0"), result.getPrice(), "The price should match the single applicable price.");
+        assertTrue(result.isPresent());
+        assertEquals(new BigDecimal("50.0"), result.get().getPrice(), "The price should match the single applicable price.");
     }
 
     @Test
@@ -66,9 +68,10 @@ public class PriceServiceImplTest {
 
         LocalDateTime applicationDate = LocalDateTime.of(2023, 12, 23, 15, 0, 0);
 
-        Price result = priceServiceImpl.getApplicablePrice(prices, applicationDate);
+        Optional<Price> result = priceServiceImpl.getApplicablePrice(prices, applicationDate);
 
-        assertEquals(new BigDecimal("60.0"), result.getPrice(), "The price with the higher priority should be selected.");
+        assertTrue(result.isPresent());
+        assertEquals(new BigDecimal("60.0"), result.get().getPrice(), "The price with the higher priority should be selected.");
     }
 
     @Test
@@ -97,9 +100,10 @@ public class PriceServiceImplTest {
 
         LocalDateTime applicationDate = LocalDateTime.of(2023, 12, 23, 15, 0, 0);
 
-        Price result = priceServiceImpl.getApplicablePrice(prices, applicationDate);
+        Optional<Price> result = priceServiceImpl.getApplicablePrice(prices, applicationDate);
 
-        assertEquals(new BigDecimal("50.0"), result.getPrice(), "The first matching price should be selected when priorities are equal.");
+        assertTrue(result.isPresent());
+        assertEquals(new BigDecimal("50.0"), result.get().getPrice(), "The first matching price should be selected when priorities are equal.");
     }
 
     @Test
@@ -117,9 +121,9 @@ public class PriceServiceImplTest {
 
         LocalDateTime applicationDate = LocalDateTime.of(2023, 12, 26, 15, 0, 0);
 
-        Price result = priceServiceImpl.getApplicablePrice(List.of(price1), applicationDate);
+        Optional<Price> result = priceServiceImpl.getApplicablePrice(List.of(price1), applicationDate);
 
-        assertNull(result, "No price should be returned if none match the application date.");
+        assertTrue(result.isEmpty(), "No price should be returned if none match the application date.");
     }
 
     @Test
@@ -129,8 +133,8 @@ public class PriceServiceImplTest {
 
         LocalDateTime applicationDate = LocalDateTime.of(2023, 12, 23, 15, 0, 0);
 
-        Price result = priceServiceImpl.getApplicablePrice(prices, applicationDate);
+        Optional<Price> result = priceServiceImpl.getApplicablePrice(prices, applicationDate);
 
-        assertNull(result, "No price should be returned if the price list is empty.");
+        assertTrue(result.isEmpty(), "No price should be returned if the price list is empty.");
     }
 }

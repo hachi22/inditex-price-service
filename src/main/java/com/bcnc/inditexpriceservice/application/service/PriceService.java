@@ -1,5 +1,6 @@
 package com.bcnc.inditexpriceservice.application.service;
 
+import com.bcnc.inditexpriceservice.api.dto.PriceDTO;
 import com.bcnc.inditexpriceservice.domain.model.Price;
 import com.bcnc.inditexpriceservice.infrastructure.persistance.PriceRepository;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,17 @@ public class PriceService {
      * @param productId       the product ID
      * @param applicationDate the application date
      */
-    public Price getPrice(Long brandId, Long productId, LocalDateTime applicationDate) {
+    public PriceDTO getApplicablePrice(LocalDateTime applicationDate, Long productId, Long brandId) {
+        List<Price> prices = priceRepository.findByBrandIdAndProductIdAndDate(brandId, productId, applicationDate);
 
-        List<Price> prices = priceRepository.findByBrandIdAndProductId(brandId, productId);
-        return priceServiceImpl.getApplicablePrice(prices, applicationDate);
+        return priceServiceImpl.getApplicablePrice(prices, applicationDate)
+                .map(price -> new PriceDTO(
+                        price.getProductId(),
+                        price.getBrandId(),
+                        price.getPriceList(),
+                        price.getStartDate(),
+                        price.getEndDate(),
+                        price.getPrice()))
+                .orElseThrow(() -> new RuntimeException("No applicable price found"));
     }
 }
