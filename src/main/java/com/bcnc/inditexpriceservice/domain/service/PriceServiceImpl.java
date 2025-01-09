@@ -1,4 +1,4 @@
-package com.bcnc.inditexpriceservice.application.service;
+package com.bcnc.inditexpriceservice.domain.service;
 
 import com.bcnc.inditexpriceservice.domain.model.Price;
 import org.springframework.stereotype.Component;

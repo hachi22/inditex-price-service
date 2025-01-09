@@ -1,6 +1,6 @@
-package com.bcnc.inditexpriceservice.api.rest;
+package com.bcnc.inditexpriceservice.web.controller;
 
-import com.bcnc.inditexpriceservice.api.dto.PriceDTO;
+import com.bcnc.inditexpriceservice.application.dto.PriceDTO;
 import com.bcnc.inditexpriceservice.application.service.PriceService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

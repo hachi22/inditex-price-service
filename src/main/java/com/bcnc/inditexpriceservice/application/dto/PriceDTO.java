@@ -1,4 +1,4 @@
-package com.bcnc.inditexpriceservice.api.dto;
+package com.bcnc.inditexpriceservice.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
