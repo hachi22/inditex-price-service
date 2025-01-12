@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PriceServiceImplTest {
+class PriceServiceImplTest {
 
     private PriceServiceImpl priceServiceImpl;
 

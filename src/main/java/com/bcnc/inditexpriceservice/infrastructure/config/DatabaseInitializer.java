@@ -2,6 +2,7 @@ package com.bcnc.inditexpriceservice.infrastructure.config;
 
 import com.bcnc.inditexpriceservice.domain.model.entity.Price;
 import com.bcnc.inditexpriceservice.infrastructure.persistance.PriceRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Component
+@Slf4j
 public class DatabaseInitializer {
 
     @Bean
@@ -60,7 +62,7 @@ public class DatabaseInitializer {
                     .currency("EUR")
                     .build());
 
-            System.out.println("Data inserted successfully.");
+            log.info("Data inserted successfully.");
         };
     }
 }
