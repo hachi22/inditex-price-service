@@ -14,15 +14,24 @@ Integration tests to validate repository and service behavior.
 
 Automated quality checks using SonarCloud.
 
-Using lombok for better readability
+Using lombok for better readability.
 
-Using a java class for inserting the data instead of a .sql file because this way we can avoid external files, we have an easier maintenance of the code, and we could use our own logic for specific cases
+The repository uses a custom query to filter prices based on brand ID, product ID, and a date range delegating the filtering logic to the database for optimized performance.
+```java
+      @Query("SELECT p FROM Price p WHERE p.brandId = :brandId AND p.productId = :productId " +
+                  "AND :applicationDate BETWEEN p.startDate AND p.endDate")
+          List<Price> findByBrandIdAndProductIdAndDate(@Param("brandId") Long brandId,
+                                                       @Param("productId") Long productId,
+                                                       @Param("applicationDate") LocalDateTime applicationDate);
+```
 
-Using "entity" annotation to crate the database table based on the Entity "Price" instead of doing it manually in a .sql file
+Using a java class for inserting the data instead of a .sql file because this way we can avoid external files, we have an easier maintenance of the code, and we could use our own logic for specific cases.
 
-Using builder design pattern for a clean and easier way of creating instance of the entity
+Using "entity" annotation to crate the database table based on the Entity "Price" instead of doing it manually in a .sql file.
 
-Developed the logic using TDD,creating the unit tests first for the logic inside PriceServiceImpl
+Using builder design pattern for a clean and easier way of creating instance of the entity.
+
+Developed the logic using TDD, creating the unit tests first for the logic inside PriceServiceImpl.
 
 ## Architecture
 
@@ -94,9 +103,33 @@ Uses Maven to build the project and execute SonarCloud analysis.
 ### Integration Tests
 
 Comprehensive integration tests ensure that the repository methods and service logic behave as expected.
-
+```java
+        @Test
+            void shouldFindPriceWithinGivenDateRange() {
+                LocalDateTime applicationDate = LocalDateTime.of(2020, 6, 14, 16, 0);
+                List<Price> prices = priceRepository.findByBrandIdAndProductIdAndDate(1L, 35455L, applicationDate);
+        
+                assertFalse(prices.isEmpty(), "Should find at least one price.");
+                assertEquals(2L, prices.size(), "Should return the correct price list.");
+                assertTrue(prices.getFirst().getStartDate().isBefore(applicationDate) ||
+                        prices.getFirst().getStartDate().isEqual(applicationDate), "Start date should be before or equal to application date.");
+                assertTrue(prices.getFirst().getEndDate().isAfter(applicationDate) ||
+                        prices.getFirst().getEndDate().isEqual(applicationDate), "End date should be after or equal to application date.");
+            }
+```
 The DatabaseInitializer component preloads test data for accurate test scenarios.
 
+```java
+       @Component
+       public class DatabaseInitializer {
+           @Bean
+           public CommandLineRunner loadData(PriceRepository priceRepository) {
+               return inserts -> {
+                   priceRepository.save(...); // Multiple predefined entries
+               };
+           }
+       }
+```
 ### Running Tests
 
 Use the following command to execute the tests:
