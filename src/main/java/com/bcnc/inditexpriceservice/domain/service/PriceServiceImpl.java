@@ -1,6 +1,6 @@
 package com.bcnc.inditexpriceservice.domain.service;
 
-import com.bcnc.inditexpriceservice.domain.model.Price;
+import com.bcnc.inditexpriceservice.domain.model.entity.Price;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

@@ -1,6 +1,6 @@
 package com.bcnc.inditexpriceservice.application.service;
 
-import com.bcnc.inditexpriceservice.domain.model.Price;
+import com.bcnc.inditexpriceservice.domain.model.entity.Price;
 import com.bcnc.inditexpriceservice.domain.service.PriceServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

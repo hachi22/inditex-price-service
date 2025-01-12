@@ -1,4 +1,4 @@
-package com.bcnc.inditexpriceservice.domain.model;
+package com.bcnc.inditexpriceservice.domain.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
