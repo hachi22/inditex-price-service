@@ -1,7 +1,7 @@
 package com.bcnc.inditexpriceservice.application.service;
 
-import com.bcnc.inditexpriceservice.application.dto.PriceDTO;
-import com.bcnc.inditexpriceservice.domain.model.Price;
+import com.bcnc.inditexpriceservice.domain.model.dto.PriceDTO;
+import com.bcnc.inditexpriceservice.domain.model.entity.Price;
 import com.bcnc.inditexpriceservice.domain.service.PriceServiceImpl;
 import com.bcnc.inditexpriceservice.infrastructure.persistance.PriceRepository;
 import org.springframework.stereotype.Service;

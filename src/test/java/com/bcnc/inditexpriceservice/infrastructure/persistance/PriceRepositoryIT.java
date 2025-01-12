@@ -1,6 +1,6 @@
 package com.bcnc.inditexpriceservice.infrastructure.persistance;
 
-import com.bcnc.inditexpriceservice.domain.model.Price;
+import com.bcnc.inditexpriceservice.domain.model.entity.Price;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

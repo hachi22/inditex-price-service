@@ -1,6 +1,6 @@
 package com.bcnc.inditexpriceservice.web.controller;
 
-import com.bcnc.inditexpriceservice.application.dto.PriceDTO;
+import com.bcnc.inditexpriceservice.domain.model.dto.PriceDTO;
 import com.bcnc.inditexpriceservice.application.service.PriceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
