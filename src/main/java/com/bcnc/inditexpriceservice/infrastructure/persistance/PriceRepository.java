@@ -1,6 +1,6 @@
 package com.bcnc.inditexpriceservice.infrastructure.persistance;
 
-import com.bcnc.inditexpriceservice.domain.model.Price;
+import com.bcnc.inditexpriceservice.domain.model.entity.Price;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

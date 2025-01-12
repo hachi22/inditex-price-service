@@ -1,6 +1,6 @@
 package com.bcnc.inditexpriceservice.infrastructure.config;
 
-import com.bcnc.inditexpriceservice.domain.model.Price;
+import com.bcnc.inditexpriceservice.domain.model.entity.Price;
 import com.bcnc.inditexpriceservice.infrastructure.persistance.PriceRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
